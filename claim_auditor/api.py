@@ -17,6 +17,7 @@ from .engine import EvidenceError, evaluate
 from .schemas import Claim, Manifest, Run
 from claim_auditor.regression_api import regression_router
 from .report_builder import build_regression_markdown
+from claim_auditor.demo_auth import install_demo_auth
 
 MAX_UPLOAD = 8 * 1024 * 1024
 
@@ -174,3 +175,4 @@ def create_app(storage_dir: str | Path | None = None) -> FastAPI:
 app = create_app()
 app.include_router(generic_router)
 app.include_router(regression_router)
+install_demo_auth(app)

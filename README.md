@@ -1,14 +1,14 @@
-# Generic Experimental Data Import — React + FastAPI add-on
+# Generic Experimental Data Import - React + FastAPI add-on
 
 This add-on accepts CSV files, or ZIP archives containing **exactly one CSV**. It preserves the existing MITM archive workflow and adds a separate descriptive evaluation path for normalized data.
 
 ## Files
 
-- `App.jsx` — the original application with a mode switch for Generic CSV/ZIP vs Existing MITM Archive.
-- `GenericImportPanel.jsx` — upload, suggested column mapping, manual overrides, preview, validation, descriptive evaluation and normalized CSV download.
-- `generic_import.py` — an independent FastAPI router providing the generic endpoints.
-- `tests/test_generic_import.py` — six backend integration tests.
-- `example_experiments.csv` — a sample generic dataset.
+- `App.jsx` - the original application with a mode switch for Generic CSV/ZIP vs Existing MITM Archive.
+- `GenericImportPanel.jsx` - upload, suggested column mapping, manual overrides, preview, validation, descriptive evaluation and normalized CSV download.
+- `generic_import.py` - an independent FastAPI router providing the generic endpoints.
+- `tests/test_generic_import.py` - six backend integration tests.
+- `example_experiments.csv` - a sample generic dataset.
 
 ## Integrate into the existing project
 
@@ -48,10 +48,10 @@ The UI guesses common aliases but lets users map arbitrary column names manually
 
 ## API
 
-- `POST /api/v1/generic/preview` (multipart `file`) — returns column names, mapping suggestions and sample records.
-- `POST /api/v1/generic/import` (JSON `preview_id`, `mapping`, `comparison_metadata_confirmed`) — validates and saves normalized data.
-- `POST /api/v1/generic/evaluate` — paired descriptive recall comparison under an FPR limit.
-- `GET /api/v1/generic/imports/{import_id}/csv` — download normalized CSV.
+- `POST /api/v1/generic/preview` (multipart `file`) - returns column names, mapping suggestions and sample records.
+- `POST /api/v1/generic/import` (JSON `preview_id`, `mapping`, `comparison_metadata_confirmed`) - validates and saves normalized data.
+- `POST /api/v1/generic/evaluate` - paired descriptive recall comparison under an FPR limit.
+- `GET /api/v1/generic/imports/{import_id}/csv` - download normalized CSV.
 
 ## Scientific safeguards and known limitations
 
@@ -70,3 +70,8 @@ This **is a working prototype add-on**, not a verified integration into the full
 ```bash
 python -m unittest discover -s tests -v
 ```
+## Author
+
+Sandra Ristić
+
+ML Research Claim Auditor - Research and Development
