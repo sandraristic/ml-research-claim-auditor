@@ -1,0 +1,5 @@
+dataset,protocol,target,split,model,recall,fpr
+ToN-IoT,holdout-v1,MITM,1,RandomForest,0.91,0.008
+ToN-IoT,holdout-v1,MITM,1,XGBoost,0.94,0.009
+ToN-IoT,holdout-v1,MITM,2,RandomForest,0.90,0.007
+ToN-IoT,holdout-v1,MITM,2,XGBoost,0.93,0.008
