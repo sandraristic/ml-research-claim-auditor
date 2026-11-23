@@ -14,3 +14,12 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.11
+
+      - key: APP_ENV
+        value: production
+
+      - key: DEMO_USERNAME
+        sync: false
+
+      - key: DEMO_PASSWORD
+        sync: false
