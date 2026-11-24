@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+"""Compare existing MITM API and generic API on identical test evidence.
+
+Run while the integrated FastAPI application is running. Read-only with respect
+ to original ZIPs; imports/audits will be stored by the local API.
+"""
 import argparse
 import csv
 import io
@@ -58,6 +64,27 @@ def read_rows(archive, protocol, target_fpr):
 
 
 def http_json(base, method, path, payload=None, filename=None, form_fields=None):
+    # In-process mode for the secured regression endpoint. The outer endpoint
+    # has already been authorized by the production demo-auth middleware.
+    # This makes NO network calls, and does not forward or embed credentials.
+    if not isinstance(base, str):
+        if filename is not None:
+            file_path = Path(filename)
+            with file_path.open('rb') as handle:
+                response = base.request(
+                    method, path,
+                    data=form_fields or {},
+                    files={'file': (file_path.name, handle, 'application/octet-stream')},
+                )
+        else:
+            response = base.request(method, path, json=payload)
+        if response.status_code >= 400:
+            raise RuntimeError(
+                f'{method} {path}: HTTP {response.status_code}: '
+                f'{response.text[:1500]}'
+            )
+        return response.json()
+
     url = base.rstrip('/') + path
     headers = {}
     body = None
@@ -150,21 +177,14 @@ def compare_audits(legacy, generic):
             failures.append(f'Summary {key}: {a[key]} != {b[key]}')
     if legacy.get('statistical_superiority') != generic.get('statistical_superiority'):
         failures.append('Statistical-superiority status differs')
-
-    if legacy.get('statistical_superiority') != generic.get('statistical_superiority'):
-        failures.append('Statistical-superiority status differs')
-
     legacy_support = legacy.get('claim_support')
     generic_support = generic.get('claim_support')
-
     if legacy_support != generic_support:
         failures.append(
             f'Claim-support status differs: '
             f'M5={legacy_support!r}, Generic={generic_support!r}'
         )
-
     return failures
-
 
 
 def import_generic(base, rows):
