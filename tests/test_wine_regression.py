@@ -1,15 +1,8 @@
-"""Regression checks for the existing UCI Wine generic-import evaluation.
-
-Run from the generic_import_upgrade project root:
-    python tests/test_wine_regression.py
-"""
-
 import json
 import re
 import sys
 from pathlib import Path
 
-# Permit execution as `python tests/test_wine_regression.py` from the project root.
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 

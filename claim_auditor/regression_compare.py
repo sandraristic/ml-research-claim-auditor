@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""Compare existing MITM API and generic API on identical test evidence.
-
-Run while the integrated FastAPI application is running. Read-only with respect
- to original ZIPs; imports/audits will be stored by the local API.
-"""
 import argparse
 import csv
 import io

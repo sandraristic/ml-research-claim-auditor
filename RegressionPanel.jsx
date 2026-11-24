@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Activity,
@@ -14,6 +13,7 @@ const formStyle = {
 };
 
 export default function RegressionPanel() {
+
   const [corrected, setCorrected] = useState(null);
   const [stability, setStability] = useState(null);
   const [limit, setLimit] = useState('0.01');
@@ -21,7 +21,7 @@ export default function RegressionPanel() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
 
-  async function run(e) {
+  const run = async (e) => {
     e.preventDefault();
 
     setBusy(true);
@@ -56,9 +56,9 @@ export default function RegressionPanel() {
     } finally {
       setBusy(false);
     }
-  }
+  };
 
-  function downloadFile(content, filename, type) {
+  const downloadFile = (content, filename, type) => {
     const blob = new Blob([content], { type });
     const objectUrl = URL.createObjectURL(blob);
 
@@ -74,9 +74,9 @@ export default function RegressionPanel() {
     setTimeout(() => {
       URL.revokeObjectURL(objectUrl);
     }, 1000);
-  }
+  };
 
-  function downloadJSON() {
+  const downloadJSON = () => {
     if (!result) return;
 
     downloadFile(
@@ -84,9 +84,9 @@ export default function RegressionPanel() {
       'regression_report.json',
       'application/json',
     );
-  }
+  };
 
-  function downloadMarkdown() {
+  const downloadMarkdown = () => {
     if (!result?.markdown_report) return;
 
     downloadFile(
@@ -94,8 +94,7 @@ export default function RegressionPanel() {
       'regression_report.md',
       'text/markdown;charset=utf-8',
     );
-  }
-
+  };
   return (
     <section className="panel">
       <div className="section-head">
@@ -267,7 +266,6 @@ export default function RegressionPanel() {
               <button
                 type="button"
                 onClick={downloadJSON}
-                className="primary"
               >
                 <Download size={16} />
                 Download JSON Report
@@ -276,7 +274,6 @@ export default function RegressionPanel() {
               <button
                 type="button"
                 onClick={downloadMarkdown}
-                className="primary"
                 disabled={!result.markdown_report}
               >
                 <Download size={16} />

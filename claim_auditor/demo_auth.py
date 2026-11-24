@@ -1,11 +1,3 @@
-"""Optional HTTP Basic authentication for a private research demo.
-
-Set APP_ENV=production, DEMO_USERNAME and DEMO_PASSWORD on the server.
-Local development remains unchanged when APP_ENV is not production.
-
-This is one shared demo password, not per-user authentication or isolation.
-"""
-
 import os
 import secrets
 from base64 import b64decode

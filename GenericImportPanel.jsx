@@ -37,39 +37,69 @@ export default function GenericImportPanel() {
   const mapped = FIELDS.every(field => mapping[field]) &&
     new Set(FIELDS.map(field => mapping[field])).size === FIELDS.length;
 
-  async function previewFile(event) {
+  const previewFile = async (event) => {
     event.preventDefault();
+
     if (!file) return;
-    setBusy(true); setError(''); setPreview(null); setImported(null); setAudit(null);
+
+    setBusy(true);
+    setError('');
+    setPreview(null);
+    setImported(null);
+    setAudit(null);
+
     try {
       const form = new FormData();
       form.append('file', file);
-      const data = await request('/preview', { method: 'POST', body: form });
+
+      const data = await request('/preview', {
+        method: 'POST',
+        body: form,
+      });
+
       setPreview(data);
       setMapping(data.suggested_mapping ?? {});
       setConfirmed(false);
-    } catch (e) { setError(e.message); }
-    finally { setBusy(false); }
-  }
-
-  async function commit(event) {
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const commit = async (event) => {
     event.preventDefault();
-    setBusy(true); setError('');
+
+    setBusy(true);
+    setError('');
+
     try {
       const result = await request('/import', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ preview_id: preview.preview_id, mapping, comparison_metadata_confirmed: confirmed }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          preview_id: preview.preview_id,
+          mapping,
+          comparison_metadata_confirmed: confirmed,
+        }),
       });
-      setImported(result); setAudit(null);
-      setDataset(result.datasets[0]); setProtocol(result.protocols[0]);
-      setTargetClass(result.target_classes[0]);
-      setBaseline(result.methods[0]); setChallenger(result.methods[1] ?? '');
-    } catch (e) { setError(e.message); }
-    finally { setBusy(false); }
-  }
 
-  async function evaluate(event) {
+      setImported(result);
+      setAudit(null);
+      setDataset(result.datasets[0]);
+      setProtocol(result.protocols[0]);
+      setTargetClass(result.target_classes[0]);
+      setBaseline(result.methods[0]);
+      setChallenger(result.methods[1] ?? '');
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const evaluate = async (event) => {
     event.preventDefault();
+
     setBusy(true);
     setError('');
     setAudit(null);
@@ -108,25 +138,29 @@ export default function GenericImportPanel() {
     } finally {
       setBusy(false);
     }
-  }
+  };
 
-  function downloadClaimReport() {
+  const downloadClaimReport = () => {
     if (!audit?.markdown_report) return;
 
     const blob = new Blob([audit.markdown_report], {
       type: 'text/markdown;charset=utf-8',
     });
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
+
     link.href = url;
     link.download = 'research_claim_report.md';
+
     document.body.appendChild(link);
     link.click();
     link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
 
-  function parseMetadata(value, label) {
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const parseMetadata = (value, label) => {
     if (!value.trim()) return null;
 
     let parsed;
@@ -141,13 +175,13 @@ export default function GenericImportPanel() {
       !parsed ||
       typeof parsed !== 'object' ||
       Array.isArray(parsed) ||
-      Object.values(parsed).some(value => typeof value !== 'string')
+      Object.values(parsed).some((value) => typeof value !== 'string')
     ) {
       throw new Error(`${label} must be a JSON object with string values.`);
     }
 
     return parsed;
-  }
+  };
 
   return (
     <section className="panel generic-import">

@@ -1,4 +1,3 @@
-"""Run: python -m unittest discover -s tests -p 'test_demo_auth.py' -v"""
 import base64
 import os
 import unittest

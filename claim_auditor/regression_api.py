@@ -1,9 +1,3 @@
-"""Regression endpoint: compare legacy MITM and Generic Import implementations.
-
-The external route is protected by the production middleware installed in api.py.
-Comparison requests execute against a private in-process test ASGI app so they
-never depend on Render's port, public HTTP calls, or demo credentials.
-"""
 import contextlib
 import io
 import math

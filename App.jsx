@@ -36,47 +36,92 @@ function App() {
 
   const splits = manifest?.expected_splits?.[dataset] ?? [];
 
-  async function upload(e) {
+  const upload = async (e) => {
     e.preventDefault();
+
     if (!file) return;
+
     setLoading('upload');
     setError('');
     setAudit(null);
+
     try {
       const form = new FormData();
       form.append('protocol', protocol);
       form.append('file', file);
-      const data = await req('/datasets/import', { method: 'POST', body: form });
-      const m = await req('/datasets/' + data.import_id + '/manifest');
+
+      const data = await req('/datasets/import', {
+        method: 'POST',
+        body: form,
+      });
+
+      const m = await req(`/datasets/${data.import_id}/manifest`);
+
       setImp(data);
       setManifest(m);
-      const ds = Object.keys(m.expected_splits)[0];
-      setDataset(ds);
-      setBaseline(m.expected_methods.includes('baseline') ? 'baseline' : m.expected_methods[0]);
-      setChallenger(m.expected_methods.includes('mitm_weighting') ? 'mitm_weighting' : m.expected_methods[1]);
-      setLimit(String(m.fpr_limits.find(n => Math.abs(n - .01) < 1e-9) ?? m.fpr_limits[0]));
-    } catch (ex) {
-      setError(ex.message)
-    } finally {
-      setLoading('')
-    }
-  }
 
-  async function run(e) {
+      const ds = Object.keys(m.expected_splits)[0];
+
+      setDataset(ds);
+      setBaseline(
+        m.expected_methods.includes('baseline')
+          ? 'baseline'
+          : m.expected_methods[0],
+      );
+      setChallenger(
+        m.expected_methods.includes('mitm_weighting')
+          ? 'mitm_weighting'
+          : m.expected_methods[1],
+      );
+      setLimit(
+        String(
+          m.fpr_limits.find((n) => Math.abs(n - 0.01) < 1e-9) ??
+          m.fpr_limits[0],
+        ),
+      );
+    } catch (ex) {
+      setError(ex.message);
+    } finally {
+      setLoading('');
+    }
+  };
+
+  const run = async (e) => {
     e.preventDefault();
+
     setLoading('evaluate');
     setError('');
     setAudit(null);
+
     try {
-      const claim = { claim_type: claimType, dataset_id: dataset, protocol_id: manifest.protocol_id, target_class: manifest.target_class, baseline_method: baseline, challenger_method: challenger, fpr_limit: Number(limit), recall_margin: 0, expected_split_ids: splits };
-      const result = await req('/claims/evaluate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ import_id: imp.import_id, claim }) });
-      setAudit(result)
+      const claim = {
+        claim_type: claimType,
+        dataset_id: dataset,
+        protocol_id: manifest.protocol_id,
+        target_class: manifest.target_class,
+        baseline_method: baseline,
+        challenger_method: challenger,
+        fpr_limit: Number(limit),
+        recall_margin: 0,
+        expected_split_ids: splits,
+      };
+
+      const result = await req('/claims/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          import_id: imp.import_id,
+          claim,
+        }),
+      });
+
+      setAudit(result);
     } catch (ex) {
-      setError(ex.message)
+      setError(ex.message);
     } finally {
-      setLoading('')
+      setLoading('');
     }
-  }
+  };
 
   return <div className="app">
     <aside className="sidebar">
